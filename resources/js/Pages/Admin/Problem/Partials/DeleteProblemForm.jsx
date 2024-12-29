@@ -6,18 +6,18 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { ThreeDots } from "react-loader-spinner";
 
-export default function DeleteProblemForm({modalOpen, closeModal, team}) {
+export default function DeleteProblemForm({modalOpen, closeModal, problem}) {
     const [isDeleting, setIsDeleting] = useState(false);
-    const deleteCandidate = (team) => {
+    const deleteCandidate = (problem) => {
         setIsDeleting(true);
-        router.delete(route("team.destroy", team.id), {
+        router.delete(route("problem.destroy", problem.id), {
             preserveScroll: true,
             onSuccess: () => {
                 closeModal()
                 setIsDeleting(false);
             },
             onFailure: () => {
-                toast.error(`Failed to delete team "${team.name}"`)
+                toast.error(`Failed to delete problem "${problem.name}"`)
                 setIsDeleting(false);
             },
             onFinish: () => {
@@ -30,13 +30,13 @@ export default function DeleteProblemForm({modalOpen, closeModal, team}) {
         <Modal show={modalOpen} onClose={closeModal}>
             <div className="p-6">
                 <h2 className="text-lg font-medium text-gray-900">
-                    Are you sure you want to delete team "{team ? `${team.name}` : ""}"?
+                    Are you sure you want to delete problem "{problem ? `${problem.title}` : ""}"?
                 </h2>
 
                 <div className="mt-6 flex justify-end">
                     <SecondaryButton type="button" onClick={closeModal}>Cancel</SecondaryButton>
 
-                    <DangerButton type="button" className="ms-3" onClick={e => deleteCandidate(team)} disabled={isDeleting}>
+                    <DangerButton type="button" className="ms-3" onClick={e => deleteCandidate(problem)} disabled={isDeleting}>
                         {isDeleting ? <ThreeDots
                             visible={true}
                             height="10"

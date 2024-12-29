@@ -121,8 +121,23 @@ class ProblemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Problem $problem)
     {
-        //
+        $filePaths = json_decode($problem->file_paths, true) ?? [];
+        $directory = 'problems/' . Str::slug($problem->title, '_');
+
+        foreach ($filePaths as $filePath) {
+            $filePath = str_replace('/storage/', '', trim($filePath));
+            if (Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+        }
+        
+        if (Storage::disk('public')->exists($directory) && Storage::disk('public')->allFiles($directory) === []) {
+            Storage::disk('public')->deleteDirectory($directory);
+        }
+        
+        $problem->delete();
+        return to_route('problem.index')->with('success','Problem "' . $problem->title . '" was deleted ');
     }
 }

@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/admin/problem', [ProblemController::class, 'index'])->name('problem.index');
     Route::post('/admin/problem', [ProblemController::class, 'store'])->name('problem.store');
     Route::put('/admin/problem/{problem}', [ProblemController::class, 'update'])->name('problem.update');
+    Route::delete('/admin/problem/{problem}', [ProblemController::class, 'destroy'])->name('problem.destroy');
 });
 
 Route::middleware('auth')->group(function () {

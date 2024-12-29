@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import SearchInput from '@/Components/SearchInput';
 import CreateProblemForm from './Partials/CreateProblemForm';
 import EditProblemForm from './Partials/EditProblemForm';
+import DeleteProblemForm from './Partials/DeleteProblemForm';
 
 export default function Index({ problems, queryParams = null, success }) {
     queryParams = queryParams || {};
@@ -206,6 +207,7 @@ export default function Index({ problems, queryParams = null, success }) {
 
             <CreateProblemForm modalOpen={createModalOpen} closeModal={closeCreateModal} />
             <EditProblemForm modalOpen={editModalOpen} closeModal={closeEditModal} problem={problemData} />
+            <DeleteProblemForm modalOpen={deleteModalOpen} closeModal={closeDeleteModal} problem={problemData} />
 
         </AuthenticatedLayout>
     );
