@@ -26,28 +26,10 @@ export default function AuthenticatedLayout({ header, children }) {
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
+                                    href={route('challenges')}
+                                    active={route().current('challenges')}
                                 >
-                                    Dashboard
-                                </NavLink>
-                                <NavLink
-                                    href={route('team.index')}
-                                    active={route().current('team.index')}
-                                >
-                                        Teams
-                                </NavLink>
-                                <NavLink
-                                    href={route('user.index')}
-                                    active={route().current('user.index')}
-                                >
-                                        Users
-                                </NavLink>
-                                <NavLink
-                                    href={route('problem.index')}
-                                    active={route().current('problem.index')}
-                                >
-                                        Problems
+                                    Challenges
                                 </NavLink>
                             </div>
                         </div>
@@ -80,11 +62,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route('profile.edit')}
-                                        >
-                                            Profile
-                                        </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route('logout')}
                                             method="post"
@@ -148,28 +125,10 @@ export default function AuthenticatedLayout({ header, children }) {
                 >
                     <div className="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
+                            href={route('challenges')}
+                            active={route().current('challenges')}
                         >
-                            Dashboard
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route('team.index')}
-                            active={route().current('team.index')}
-                        >
-                            Teams
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route('user.index')}
-                            active={route().current('user.index')}
-                        >
-                            Users
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            href={route('problem.index')}
-                            active={route().current('problem.index')}
-                        >
-                            Problems
+                            Challenges
                         </ResponsiveNavLink>
                     </div>
 
@@ -184,9 +143,6 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
-                                Profile
-                            </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
                                 href={route('logout')}

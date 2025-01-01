@@ -32,6 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
+            ->authGuard('admin')
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Slate,
@@ -61,7 +62,8 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
-                CustomAuth::class,
+                CustomAuth::class
+                // Authenticate::class,
             ])
             // ->middleware(['admin'])
             ->plugins([

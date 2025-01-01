@@ -22,6 +22,7 @@ class ProblemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document';
     protected static ?int $navigationSort = 5;
+    protected static ?string $navigationGroup = 'Management';
 
     public static function form(Form $form): Form
     {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChallengesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProblemController;
 use App\Http\Controllers\ProfileController;
@@ -25,6 +26,10 @@ use Illuminate\Support\Facades\Route;
 //     Route::put('/admin/problem/{problem}', [ProblemController::class, 'update'])->name('problem.update');
 //     Route::delete('/admin/problem/{problem}', [ProblemController::class, 'destroy'])->name('problem.destroy');
 // });
+
+Route::middleware(['auth:web', 'verified', 'participant'])->group(function () {
+    Route::get('/challenges', [ChallengesController::class, 'index'])->name('challenges');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
