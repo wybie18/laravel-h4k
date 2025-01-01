@@ -30,6 +30,14 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if (Auth::check() && Auth::user()->role !== 'user') {
+            Auth::logout();
+
+            return redirect()->back()->withErrors([
+                'role' => 'These credentials do not match our records.',
+            ]);
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));

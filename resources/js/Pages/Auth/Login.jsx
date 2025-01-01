@@ -70,7 +70,7 @@ export default function Login({ status }) {
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>
-
+                <InputError message={errors.role} className="mt-2" />
                 <div className="mt-4 block">
                     <label className="flex items-center">
                         <Checkbox

@@ -21,6 +21,11 @@ class Problem extends Model
     protected $casts = [
         'file_paths' => 'array',
     ];
+
+    protected $attributes = [
+        'file_paths' => '',
+    ];
+        
     public function submissions() {
         return $this->hasMany(Submission::class);
     }
