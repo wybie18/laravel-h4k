@@ -3,8 +3,10 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
+import { Sidebar } from 'flowbite-react';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards } from "react-icons/hi";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -14,7 +16,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
+            <nav className="fixed top-0 z-50 w-full border-b border-gray-100 bg-white">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
@@ -163,7 +165,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 </header>
             )}
             <Toaster position="top-right" reverseOrder={false} />
-            <main>{children}</main>
+            <main className='scroll-pt-28'>{children}</main>
         </div>
     );
 }
