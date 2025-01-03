@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProblemResource;
+use App\Models\Problem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ChallengesController extends Controller
@@ -12,7 +15,24 @@ class ChallengesController extends Controller
      */
     public function index()
     {
-        return Inertia::render('User/Challenges');   
+        $problems = Problem::select('id', 'title', 'description', 'points', 'category', 'flag', 'file_paths')
+            ->where('is_active', true)
+            ->orderBy('category')
+            ->orderBy('points')
+            ->get()
+            ->each(function ($problem) {
+                $problem->file_paths = $problem->file_paths
+                    ? collect($problem->file_paths)
+                        ->map(fn($path) => Storage::url($path))
+                    : null;
+            })
+            ->groupBy('category');
+
+        return Inertia::render('User/Challenges', [
+            "problems" => $problems,
+            "categories" => array_keys($problems->toArray()),
+            "success" => session('success'),
+        ]);   
     }
 
     /**

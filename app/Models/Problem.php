@@ -23,7 +23,7 @@ class Problem extends Model
     ];
 
     protected $attributes = [
-        'file_paths' => '',
+        'file_paths' => '[]',
     ];
         
     public function submissions() {
