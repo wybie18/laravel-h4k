@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:web', 'verified', 'participant'])->group(function () {
     Route::get('/challenges', [ChallengesController::class, 'index'])->name('challenges');
+    Route::post('/challenges', [ChallengesController::class,'store'])->name('challenges.submit');
 });
 
 Route::middleware('auth')->group(function () {

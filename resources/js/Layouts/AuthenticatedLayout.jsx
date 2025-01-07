@@ -3,16 +3,38 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
-import { Sidebar } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards } from "react-icons/hi";
+import { useEventBus } from '@/EventBus';
+import { FaGripfire } from 'react-icons/fa';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
+    const [teamScore, setTeamScore] = useState(user.team?.score || 0);
+    const { emit } = useEventBus();
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+
+    useEffect(() => {
+        const teamId = user.team.id;
+        Echo.private(`team.${teamId}`)
+            .error((error) => {
+                console.error('Echo error:', error);
+            })
+            .listen('SocketChallenges', (e) => {
+                console.log('Problem solved event received:', e);
+                emit('problemSolved', e);
+                if (e.team) {
+                    console.log('Team data received:', e.team);
+                    setTeamScore(e.team.score);
+                }
+            });
+
+        return () => {
+            Echo.leave(`team.${teamId}`);
+        };
+    }, []);
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -64,13 +86,30 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route('logout')}
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </Dropdown.Link>
+                                        <Dropdown.Item>
+                                            <div className='flex items-center justify-between'>
+                                                <span>
+                                                    Team Score
+                                                </span>
+                                                <div className='flex items-center gap-x-1'>
+                                                    <FaGripfire />
+                                                    <span>
+                                                        {teamScore}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        
+                                        </Dropdown.Item>
+                                        <div className="border-t border-gray-200">
+                                            <Dropdown.Link
+                                                href={route('logout')}
+                                                method="post"
+                                                as="button"
+                                            >
+                                                Log Out
+                                            </Dropdown.Link>
+                                        </div>
+
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>

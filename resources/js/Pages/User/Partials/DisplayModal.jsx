@@ -7,11 +7,19 @@ import toast from "react-hot-toast";
 import { ThreeDots } from "react-loader-spinner";
 import ReactMarkdown from "react-markdown";
 import { FaFontAwesomeFlag, FaGripfire } from "react-icons/fa";
+import { useEffect } from "react";
 
 export default function DisplayModal({ modalOpen, closeModal, problem = {} }) {
     const { data, setData, post, processing, errors, reset } = useForm({
+        problem_id: '',
         flag: '',
     });
+
+    useEffect(() => {
+        if (problem && problem.id) {
+            setData('problem_id', problem.id);
+        }
+    }, [problem]);
 
     const handleErrors = (errors) => {
         if (errors) {
@@ -29,11 +37,8 @@ export default function DisplayModal({ modalOpen, closeModal, problem = {} }) {
 
     const onSubmit = (e, id) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('problem_id', id);
-        formData.append('flag', data.flag);
-        post(route("submission.store"), {
-            data: formData,
+        console.log('Submitting Problem ID:', id);
+        post(route("challenges.submit"), {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
@@ -50,7 +55,7 @@ export default function DisplayModal({ modalOpen, closeModal, problem = {} }) {
 
     return (
         <Modal show={modalOpen} onClose={handleOnClose} maxWidth="lg">
-            <form onSubmit={onSubmit} className="p-6">
+            <form onSubmit={(e) => onSubmit(e, problem.id)} className="p-6">
                 <div className='flex items-center justify-between'>
                     <h2 className="text-xl font-bold text-gray-900">
                         {problem ? `${problem.title}` : "problem"}

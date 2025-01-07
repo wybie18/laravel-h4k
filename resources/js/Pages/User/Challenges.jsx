@@ -1,15 +1,19 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { FaHashtag } from "react-icons/fa";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from "react-hot-toast";
 import Card from '@/Components/Card';
 import DisplayModal from './Partials/DisplayModal';
+import { useEventBus } from '@/EventBus';
 
-export default function Challenges({ problems, success }) {
+const Challenges = ({ problems: initialProblems, status_message }) => {
+    const [problems, setProblems] = useState(initialProblems);
     const [problemData, setProblemData] = useState(null);
     const [displayModalOpen, setDisplayModalOpen] = useState(false);
     const [showSidebar, setShowSidebar] = useState(false);
-
+    const { subscribe } = useEventBus();
+    
     const handleDisplay = (problem) => {
         console.log('Problem to display:', problem);
         setProblemData(p => (p = problem));
@@ -19,10 +23,36 @@ export default function Challenges({ problems, success }) {
     const closeDisplayModal = () => {
         setDisplayModalOpen(false);
     };
+    
+    useEffect(() => {
+        if (status_message) {
+            const { type, message } = status_message;
+            type === "success" ? toast.success(message) : toast.error(message);
+        }
+    }, [status_message]);
+
+    useEffect(() => {
+        const unsubscribe = subscribe('problemSolved', (data) =>{
+            setProblems((prevProblems) => {
+                const updatedProblems = {...prevProblems };
+                for (let category in updatedProblems) {
+                    updatedProblems[category] = updatedProblems[category].map((problem) => {
+                        if (problem.id === data.problemId) {
+                            return {...problem, is_solved: true };
+                        }
+                        return problem;
+                    });
+                }
+                return updatedProblems;
+            });
+        });
+        return () => {
+            unsubscribe();
+        }
+    }, [subscribe])
 
     return (
-        <AuthenticatedLayout
-        >
+        <>
             <Head title="Challenges" />
             <aside className={(showSidebar ? 'translate-x-0' : '-translate-x-full') + " fixed top-20 sm:left-2 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"}>
                 <div className="h-full px-3 py-4 overflow-y-auto bg-gray-100">
@@ -52,7 +82,13 @@ export default function Challenges({ problems, success }) {
                             <h2 className="text-2xl font-bold capitalize mb-4">{category}</h2>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {challenges.map((challenge) => (
-                                    <Card title={challenge.title} key={challenge.id} points={challenge.points} onClick={() => handleDisplay(challenge)}/>
+                                    <Card 
+                                        title={challenge.title} 
+                                        key={challenge.id} 
+                                        points={challenge.points} 
+                                        isSolved={challenge.is_solved}
+                                        onClick={() => handleDisplay(challenge)}        
+                                    />
                                 ))}
                             </div>
                         </section>
@@ -62,6 +98,11 @@ export default function Challenges({ problems, success }) {
             
             <DisplayModal modalOpen={displayModalOpen} closeModal={closeDisplayModal} problem={problemData} />
 
-        </AuthenticatedLayout>
+        </>
     );
 }
+
+
+Challenges.layout = page => <AuthenticatedLayout children={page} />
+
+export default Challenges

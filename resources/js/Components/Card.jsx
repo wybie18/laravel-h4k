@@ -1,11 +1,11 @@
 import { FaGripfire } from "react-icons/fa";
 
-export default function Card({ title, points, onClick, children }) {
+export default function Card({ title, points, onClick, isSolved }) {
 
     return (
         <>
-            <div className="max-w-80 bg-white border border-gray-200 rounded-lg shadow hover:cursor-pointer" onClick={onClick}>
-                <div className='border-b border-gray-200'>
+            <div className={`max-w-80 ${ isSolved ? 'bg-green-300' : 'bg-white' } border border-gray-200 rounded-lg shadow hover:cursor-pointer`} onClick={onClick}>
+                <div>
                     <div className='flex items-center justify-between p-5'>
                         <h3 className="text-xl font-bold text-gray-900">
                             {title}
