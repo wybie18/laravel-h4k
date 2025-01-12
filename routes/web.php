@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::middleware(['auth:web', 'verified', 'participant'])->group(function () {
+    Route::get('/user/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/challenges', [ChallengesController::class, 'index'])->name('challenges');
     Route::post('/challenges', [ChallengesController::class,'store'])->name('challenges.submit');
 });
