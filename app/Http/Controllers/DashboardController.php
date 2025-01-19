@@ -26,6 +26,7 @@ class DashboardController extends Controller
             $stats = DB::table('submissions')
                 ->join('problems', 'submissions.problem_id', '=', 'problems.id')
                 ->where('submissions.user_id', $member->id)
+                ->where('submissions.is_correct', 1)
                 ->select(
                     DB::raw('COUNT(DISTINCT submissions.problem_id) as problems_solved'),
                     DB::raw('SUM(CASE WHEN submissions.is_correct = 1 THEN problems.points ELSE 0 END) as total_score')
