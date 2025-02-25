@@ -46,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            ->sidebarFullyCollapsibleOnDesktop()
             ->widgets([
                 CustomAccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
