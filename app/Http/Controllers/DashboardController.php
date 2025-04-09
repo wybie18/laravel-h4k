@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -32,11 +31,11 @@ class DashboardController extends Controller
                     DB::raw('SUM(CASE WHEN submissions.is_correct = 1 THEN problems.points ELSE 0 END) as total_score')
                 )
                 ->first();
-    
+
             return [
-                'username' => $member->username,
+                'username'        => $member->username,
                 'problems_solved' => $stats->problems_solved,
-                'total_score' => $stats->total_score,
+                'total_score'     => $stats->total_score,
             ];
         });
 
@@ -63,20 +62,20 @@ class DashboardController extends Controller
             ->groupBy('username');
 
         $usersTeamData = $userScores->map(function ($scores, $username) use ($timeGroups) {
-            $timeScores = collect($scores)->keyBy('time_group');
+            $timeScores   = collect($scores)->keyBy('time_group');
             $runningTotal = 0;
 
             $normalizedScores = $timeGroups->map(function ($timeGroup) use ($timeScores, &$runningTotal) {
                 $currentScore = $timeScores->get($timeGroup)->total_score ?? 0;
                 $runningTotal += $currentScore;
                 return [
-                    'time_group' => $timeGroup,
+                    'time_group'  => $timeGroup,
                     'total_score' => $runningTotal,
                 ];
             });
 
             return [
-                'times' => $normalizedScores->pluck('time_group'),
+                'times'  => $normalizedScores->pluck('time_group'),
                 'scores' => $normalizedScores->pluck('total_score'),
             ];
         });
@@ -94,24 +93,26 @@ class DashboardController extends Controller
         $progressStats = DB::table('problems')
             ->select(
                 DB::raw('COUNT(DISTINCT problems.id) as total_problems'),
-                DB::raw('SUM(CASE WHEN submissions.is_correct = 1 THEN 1 ELSE 0 END) as solved')
+                DB::raw('COUNT(DISTINCT CASE WHEN submissions.is_correct = 1 THEN problems.id ELSE NULL END) as solved')
             )
-            ->leftJoin('submissions', 'problems.id', '=', 'submissions.problem_id')
-            ->whereIn('submissions.user_id', function ($query) use ($team) {
-                $query->select('id')->from('users')->where('team_id', $team->id);
+            ->leftJoin('submissions', function ($join) use ($team) {
+                $join->on('problems.id', '=', 'submissions.problem_id')
+                    ->whereIn('submissions.user_id', function ($query) use ($team) {
+                        $query->select('id')->from('users')->where('team_id', $team->id);
+                    });
             })
             ->first();
 
         return Inertia::render('User/Dashboard', [
-            'teamName' => $team->name,
-            'teamData' => $teamData,
-            'usersTeamData' => $usersTeamData,
+            'teamName'        => $team->name,
+            'teamData'        => $teamData,
+            'usersTeamData'   => $usersTeamData,
             'submissionStats' => [
-                'correct' => $submissionStats->total > 0 ? ($submissionStats->correct / $submissionStats->total) * 100 : 0,
+                'correct'   => $submissionStats->total > 0 ? ($submissionStats->correct / $submissionStats->total) * 100 : 0,
                 'incorrect' => $submissionStats->total > 0 ? ($submissionStats->incorrect / $submissionStats->total) * 100 : 0,
             ],
-            'progressStats' => [
-                'solved' => $progressStats->total_problems > 0 ? ($progressStats->solved / $progressStats->total_problems) * 100 : 0,
+            'progressStats'   => [
+                'solved'   => $progressStats->total_problems > 0 ? ($progressStats->solved / $progressStats->total_problems) * 100 : 0,
                 'unsolved' => $progressStats->total_problems > 0 ? (($progressStats->total_problems - $progressStats->solved) / $progressStats->total_problems) * 100 : 0,
             ],
         ]);

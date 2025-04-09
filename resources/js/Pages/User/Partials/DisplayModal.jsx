@@ -37,7 +37,11 @@ export default function DisplayModal({ modalOpen, closeModal, problem = {} }) {
 
     const onSubmit = (e, id) => {
         e.preventDefault();
-        console.log('Submitting Problem ID:', id);
+        if (!problem || !problem.id) {
+            toast.error("Problem ID is required");
+            return;
+        }
+        setData('problem_id', problem.id);
         post(route("challenges.submit"), {
             preserveScroll: true,
             onSuccess: () => {
