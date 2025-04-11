@@ -18,12 +18,20 @@ class TopIndividual extends BaseWidget
             ->query(
                 User::query()
                     ->select('users.*')
+                    ->addSelect([
+                        'score' => function ($query) {
+                            $query->selectRaw('COALESCE(SUM(points), 0)')
+                                  ->from('problems')
+                                  ->whereIn('id', function ($subQuery) {
+                                      $subQuery->select('problem_id')
+                                               ->from('submissions')
+                                               ->whereColumn('user_id', 'users.id')
+                                               ->where('is_correct', true)
+                                               ->distinct();
+                                  });
+                        }
+                    ])
                     ->where('users.role', '!=', 'admin')
-                    ->withCount(['submissions as score' => function (Builder $query) {
-                        $query->join('problems', 'submissions.problem_id', '=', 'problems.id')
-                              ->where('submissions.is_correct', true)
-                              ->selectRaw('SUM(problems.points)');
-                    }])
                     ->orderByDesc('score')
             )
             ->defaultSort('score', 'desc')
