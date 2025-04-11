@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 export default function DisplayModal({ modalOpen, closeModal, problem = {} }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        problem_id: '',
+        problem_id: problem ? problem.id : "",
         flag: '',
     });
 
@@ -19,7 +19,7 @@ export default function DisplayModal({ modalOpen, closeModal, problem = {} }) {
         if (problem && problem.id) {
             setData('problem_id', problem.id);
         }
-    }, [problem]);
+    }, [problem, modalOpen]);
 
     const handleErrors = (errors) => {
         if (errors) {
@@ -37,7 +37,7 @@ export default function DisplayModal({ modalOpen, closeModal, problem = {} }) {
 
     const onSubmit = (e, id) => {
         e.preventDefault();
-        if (!problem || !problem.id) {
+        if (!data.problem_id) {
             toast.error("Problem ID is required");
             return;
         }
